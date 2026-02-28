@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>University PMS - Frontend Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  /* General Reset */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; color: #333; min-height: 100vh; display: flex; flex-direction: column; }
+  header, footer { background: #007BFF; color: #fff; padding: 15px; text-align: center; }
+  header { display: flex; justify-content: space-between; align-items: center; }
+  #logout-btn { background: #ff4d4d; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; color: white; }
+  #logout-btn:hover { background: #cc0000; }
+  main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+
+  .card { background: #fff; border-radius: 10px; padding: 20px; margin: 15px; width: 100%; max-width: 1000px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  h1,h2,h3 { margin-bottom: 15px; }
+  input, select, textarea, button { width: 100%; margin: 10px 0; padding: 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; }
+  button { background: #007BFF; color: #fff; border: none; cursor: pointer; transition: 0.3s; font-size: 15px; }
+  button:hover { background: #0056b3; }
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  table, th, td { border: 1px solid #ccc; }
+  th, td { padding: 10px; text-align: left; font-size: 14px; }
+  .hidden { display: none; }
+  .link { color: #007BFF; cursor: pointer; text-decoration: underline; margin-top: 10px; display: inline-block; }
+  .pagination { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+  .section-title { margin-top: 20px; margin-bottom: 10px; font-size: 18px; color: #007BFF; }
+
+  /* Responsive */
+  @media(max-width:768px){ main{flex-direction:column;align-items:center;} .card{max-width:95%;} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>University PMS Demo</h1>
+  <button id="logout-btn" class="hidden" onclick="logout()">Logout</button>
+</header>
+
+<main>
+  <!-- Registration Page -->
+  <section id="register-section" class="card">
+    <h2>Student Registration</h2>
+    <input type="text" id="reg-name" placeholder="Full Name">
+    <input type="text" id="reg-username" placeholder="Username">
+    <input type="email" id="reg-email" placeholder="Email">
+    <input type="password" id="reg-password" placeholder="Password">
+    <input type="password" id="reg-confirm-password" placeholder="Confirm Password">
+    <button onclick="register()">Register</button>
+    <p id="register-message" style="color: green;"></p>
+    <span class="link" onclick="showLogin()">Already have an account? Login here</span>
+  </section>
+
+  <!-- Login Page -->
+  <section id="login-section" class="card hidden">
+    <h2>Login</h2>
+    <input type="text" id="login-username" placeholder="Username">
+    <input type="password" id="login-password" placeholder="Password">
+    <select id="login-role">
+      <option value="student">Student</option>
+      <option value="supervisor">Supervisor</option>
+      <option value="coordinator">Coordinator</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button onclick="login()">Login</button>
+    <p id="login-message" style="color:red;"></p>
+    <span class="link" onclick="showRegister()">Don't have an account? Register here</span>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="dashboard-section" class="card hidden">
+    <h2>Dashboard</h2>
+    <!-- Projects -->
+    <div id="projects-container">
+      <h3 class="section-title">Projects</h3>
+      <table id="projects-table">
+        <thead>
+          <tr><th>ID</th><th>Title</th><th>Description</th><th>Supervisor</th><th>Status</th><th>Deadline</th><th>Assigned Users</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="pagination">
+        <button onclick="prevProjects()">Previous</button>
+        <button onclick="nextProjects()">Next</button>
+      </div>
+    </div>
+    <!-- Feedback -->
+    <div id="feedback-container">
+      <h3 class="section-title">Feedbacks</h3>
+      <table id="feedback-table">
+        <thead><tr><th>Project ID</th><th>User</th><th>Feedback</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <!-- Reviews -->
+    <div id="review-container">
+      <h3 class="section-title">Reviews</h3>
+      <table id="review-table">
+        <thead><tr><th>Project ID</th><th>Reviewer</th><th>Role</th><th>Review</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2026 University PMS Demo</p>
+</footer>
+
+<script>
+  // ---------- Data ----------
+  let users = [];
+  let projects = [];
+  let feedbacks = [];
+  let reviews = [];
+  let currentUser = null;
+
+  // ---------- Show Pages ----------
+  function showRegister(){ document.getElementById('register-section').classList.remove('hidden'); document.getElementById('login-section').classList.add('hidden'); }
+  function showLogin(){ document.getElementById('login-section').classList.remove('hidden'); document.getElementById('register-section').classList.add('hidden'); }
+
+  // ---------- Registration ----------
+  function register(){
+    const name=document.getElementById('reg-name').value.trim();
+    const username=document.getElementById('reg-username').value.trim();
+    const email=document.getElementById('reg-email').value.trim();
+    const password=document.getElementById('reg-password').value;
+    const confirm=document.getElementById('reg-confirm-password').value;
+    const msg=document.getElementById('register-message');
+    if(!name||!username||!email||!password||!confirm){msg.innerText="All fields required";return;}
+    if(password!==confirm){msg.innerText="Passwords do not match";return;}
+    if(users.some(u=>u.username===username)){msg.innerText="Username exists";return;}
+    users.push({name,username,email,password,role:'student'});
+    msg.innerText="Registration successful!";
+    document.getElementById('reg-name').value='';
+    document.getElementById('reg-username').value='';
+    document.getElementById('reg-email').value='';
+    document.getElementById('reg-password').value='';
+    document.getElementById('reg-confirm-password').value='';
+  }
+
+  // ---------- Login ----------
+  function login(){
+    const username=document.getElementById('login-username').value.trim();
+    const password=document.getElementById('login-password').value;
+    const role=document.getElementById('login-role').value;
+    const msg=document.getElementById('login-message');
+    const user=users.find(u=>u.username===username&&u.password===password&&u.role===role);
+    if(!user){msg.innerText="Invalid credentials"; return;}
+    currentUser=user;
+    msg.innerText="Login successful!";
+    showDashboard();
+  }
+
+  // ---------- Logout ----------
+  function logout(){
+    currentUser=null;
+    document.getElementById('dashboard-section').classList.add('hidden');
+    document.getElementById('login-section').classList.remove('hidden');
+    document.getElementById('logout-btn').classList.add('hidden');
+  }
+
+  // ---------- Dashboard ----------
+  function showDashboard(){
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('register-section').classList.add('hidden');
+    document.getElementById('dashboard-section').classList.remove('hidden');
+    document.getElementById('logout-btn').classList.remove('hidden');
+    renderTables();
+  }
+
+  function renderTables(){
+    // Projects
+    const projBody=document.querySelector('#projects-table tbody');
+    projBody.innerHTML='';
+    if(projects.length===0){projBody.innerHTML='<tr><td colspan="7">No projects</td></tr>';}
+    projects.forEach(p=>{projBody.innerHTML+=`<tr><td>${p.id}</td><td>${p.title}</td><td>${p.description}</td><td>${p.supervisor||'N/A'}</td><td>${p.status}</td><td>${p.deadline||'N/A'}</td><td>${(p.assigned||[]).join(', ')}</td></tr>`;});
+    // Feedback
+    const fbBody=document.querySelector('#feedback-table tbody'); fbBody.innerHTML='';
+    if(feedbacks.length===0){fbBody.innerHTML='<tr><td colspan="3">No feedbacks</td></tr>';}
+    feedbacks.forEach(f=>{fbBody.innerHTML+=`<tr><td>${f.projectId}</td><td>${f.user}</td><td>${f.text}</td></tr>`;});
+    // Reviews
+    const revBody=document.querySelector('#review-table tbody'); revBody.innerHTML='';
+    if(reviews.length===0){revBody.innerHTML='<tr><td colspan="4">No reviews</td></tr>';}
+    reviews.forEach(r=>{revBody.innerHTML+=`<tr><td>${r.projectId}</td><td>${r.reviewer}</td><td>${r.role}</td><td>${r.text}</td></tr>`;});
+  }
+
+  // ---------- Demo Data ----------
+  projects.push({id:1,title:'AI Chatbot',description:'Build a chatbot',supervisor:'Dr. Smith',status:'Pending',deadline:'2026-03-10',assigned:['Alice','Bob']});
+  projects.push({id:2,title:'Web App',description:'Project management app',supervisor:'Prof. Lee',status:'Ongoing',deadline:'2026-03-20',assigned:['Charlie','David']});
+  feedbacks.push({projectId:1,user:'Alice',text:'Great progress!'});
+  reviews.push({projectId:2,reviewer:'Prof. Lee',role:'Supervisor',text:'Needs improvement on UI'});
+
+  users.push({name:'Admin User', username:'admin', password:'admin', role:'admin'});
+  users.push({name:'Coordinator', username:'coord', password:'coord', role:'coordinator'});
+  users.push({name:'Supervisor', username:'sup', password:'sup', role:'supervisor'});
+  users.push({name:'Student', username:'stud', password:'stud', role:'student'});
+
+  renderTables();
+</script>
+
+</body>
+</html>

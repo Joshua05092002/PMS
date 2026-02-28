@@ -1,0 +1,70 @@
+/* General Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f4f9;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header, footer {
+  text-align: center;
+  background: #007BFF;
+  color: white;
+  padding: 15px;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 15px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.hidden { display: none; }
+
+h1, h2 { margin-bottom: 15px; }
+
+input, textarea, select, button {
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+textarea { resize: vertical; min-height: 80px; }
+
+button { background: #007BFF; color: white; border: none; font-size: 16px; cursor: pointer; transition: 0.3s; }
+
+button:hover { background: #0056b3; }
+
+.password-field { display: flex; gap: 5px; }
+
+.password-field input { flex: 1; }
+
+table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+
+table th, table td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+
+.pagination { display: flex; justify-content: space-between; }
+
+@media (max-width: 480px) {
+  .card { max-width: 90%; }
+  h1 { font-size: 22px; }
+  h2 { font-size: 18px; }
+}

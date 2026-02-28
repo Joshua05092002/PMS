@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>University PMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>University Project Management System</h1>
+    <button id="logout-btn" class="hidden" onclick="logout()">Logout</button>
+  </header>
+
+  <main>
+    <!-- Registration Section -->
+    <section id="register-section" class="card">
+      <h2>Student Registration</h2>
+      <input type="text" id="reg-name" placeholder="Full Name">
+      <input type="text" id="reg-username" placeholder="Username">
+      <input type="email" id="reg-email" placeholder="Email">
+      <div class="password-field">
+        <input type="password" id="reg-password" placeholder="Password">
+        <button type="button" onclick="togglePassword('reg-password')">Show</button>
+      </div>
+      <div class="password-field">
+        <input type="password" id="reg-confirm-password" placeholder="Confirm Password">
+        <button type="button" onclick="togglePassword('reg-confirm-password')">Show</button>
+      </div>
+      <button onclick="register()">Register</button>
+      <p id="register-message"></p>
+    </section>
+
+    <!-- Login Section -->
+    <section id="login-section" class="card">
+      <h2>Login</h2>
+      <input type="text" id="username" placeholder="Username">
+      <div class="password-field">
+        <input type="password" id="password" placeholder="Password">
+        <button type="button" onclick="togglePassword('password')">Show</button>
+      </div>
+      <select id="role">
+        <option value="student">Student</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="coordinator">Coordinator</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button onclick="login()">Login</button>
+      <p id="login-message"></p>
+    </section>
+
+    <!-- Project Section -->
+    <section id="project-section" class="card hidden active-section">
+      <h2>Create Project (Student)</h2>
+      <input type="text" id="project-title" placeholder="Project Title">
+      <textarea id="project-description" placeholder="Project Description"></textarea>
+      <input type="text" id="project-supervisor" placeholder="Supervisor (Optional)">
+      <button onclick="createProject()">Submit Project</button>
+      <p id="project-message"></p>
+
+      <h2>All Projects</h2>
+      <button onclick="getProjects()">Load Projects</button>
+      <table id="project-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Supervisor</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="pagination">
+        <button onclick="prevProjects()">Previous</button>
+        <button onclick="nextProjects()">Next</button>
+      </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section id="feedback-section" class="card hidden">
+      <h2>Submit Feedback (Student)</h2>
+      <input type="number" id="feedback-project-id" placeholder="Project ID">
+      <textarea id="feedback-text" placeholder="Your feedback"></textarea>
+      <button onclick="submitFeedback()">Submit Feedback</button>
+      <p id="feedback-message"></p>
+    </section>
+
+    <!-- Review Section -->
+    <section id="review-section" class="card hidden">
+      <h2>Submit Review (Supervisor/Coordinator)</h2>
+      <input type="number" id="review-project-id" placeholder="Project ID">
+      <textarea id="review-text" placeholder="Your review"></textarea>
+      <button onclick="submitReview()">Submit Review</button>
+      <p id="review-message"></p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 University PMS</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
